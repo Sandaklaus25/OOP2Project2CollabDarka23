@@ -10,14 +10,15 @@
 
 <BorderPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.example.storageinventory.controller.MainMenuController">
+            fx:controller="com.example.storageinventory.controller.MainMenuController"
+            fx:id="mainBorderPane">
 
     <top>
         <MenuBar BorderPane.alignment="CENTER">
             <menus>
                 <Menu text="Номенклатури">
                     <items>
-                        <MenuItem text="Стоки" />
+                        <MenuItem text="Стоки" onAction="#onShowProducts"/>
                         <MenuItem text="Клиенти" />
                         <MenuItem text="Доставчици" />
                     </items>

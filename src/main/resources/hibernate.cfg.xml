@@ -20,5 +20,8 @@
 
         <mapping class="com.example.storageinventory.model.UserRole"/>
         <mapping class="com.example.storageinventory.model.User"/>
+        <mapping class="com.example.storageinventory.model.Product"/>
+
+
     </session-factory>
 </hibernate-configuration>
