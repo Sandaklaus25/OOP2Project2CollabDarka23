@@ -36,17 +36,32 @@ public class LoginController {
         User user = userService.authenticate(username, password);
 
         if (user != null) {
-            errorLabel.setText("Успешен вход! Здравей, " + user.getFullName());
-            errorLabel.setTextFill(Color.GREEN);
-            errorLabel.setVisible(true);
+            try {
+                // 1. Скриваме (затваряме) Login прозореца
+                // Взимаме прозореца чрез някой елемент от сцената (напр. бутона или полето)
+                javafx.stage.Stage loginStage = (javafx.stage.Stage) errorLabel.getScene().getWindow();
+                loginStage.close();
 
-            // ТУК ПО-КЪСНО ЩЕ ОТВАРЯМЕ ГЛАВНОТО МЕНЮ
-            System.out.println("User logged in: " + user.getUsername() + " Role: " + user.getRole().getRoleName());
+                // 2. Зареждаме новия FXML файл (Главното меню)
+                javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/example/storageinventory/main-menu-view.fxml"));
+                javafx.scene.Scene scene = new javafx.scene.Scene(loader.load());
 
-        } else {
-            errorLabel.setText("Грешно име или парола!");
-            errorLabel.setTextFill(Color.RED);
-            errorLabel.setVisible(true);
+                // 3. Взимаме контролера на новия прозорец и му подаваме юзъра
+                MainMenuController controller = loader.getController();
+                controller.setLoggedInUser(user);
+
+                // 4. Създаваме и показваме новия прозорец
+                javafx.stage.Stage mainStage = new javafx.stage.Stage();
+                mainStage.setTitle("Складова система - Главно Меню");
+                mainStage.setScene(scene);
+                mainStage.setMaximized(true); // Да се отвори на цял екран
+                mainStage.show();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                errorLabel.setText("Критична грешка при зареждане на менюто!");
+                errorLabel.setVisible(true);
+            }
         }
     }
 }

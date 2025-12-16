@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.storageinventory.controller.MainMenuController">
+
+    <top>
+        <MenuBar BorderPane.alignment="CENTER">
+            <menus>
+                <Menu text="Номенклатури">
+                    <items>
+                        <MenuItem text="Стоки" />
+                        <MenuItem text="Клиенти" />
+                        <MenuItem text="Доставчици" />
+                    </items>
+                </Menu>
+                <Menu text="Склад">
+                    <items>
+                        <MenuItem text="Приемане на стока" />
+                        <MenuItem text="Изписване на стока" />
+                        <MenuItem text="Справка наличности" />
+                    </items>
+                </Menu>
+                <Menu text="Система">
+                    <items>
+                        <MenuItem text="Изход" onAction="#onLogout"/>
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+    </top>
+
+    <center>
+        <VBox alignment="CENTER" spacing="20.0">
+            <Label fx:id="welcomeLabel" text="Добре дошли в Складовата Система">
+                <font>
+                    <Font name="System Bold" size="28.0" />
+                </font>
+            </Label>
+            <Label fx:id="roleLabel" text="Роля: ..." textFill="#666666">
+                <font>
+                    <Font size="16.0" />
+                </font>
+            </Label>
+        </VBox>
+    </center>
+
+</BorderPane>
