@@ -2,7 +2,14 @@ module com.example.storageinventory {
     requires javafx.controls;
     requires javafx.fxml;
 
+    requires java.sql;
+    requires java.naming;
+    requires org.hibernate.orm.core;
+    requires jakarta.persistence;
 
-    opens com.example.storageinventory to javafx.fxml;
+    requires org.apache.logging.log4j;
+
+    opens com.example.storageinventory to javafx.fxml, org.hibernate.orm.core;
+
     exports com.example.storageinventory;
 }
