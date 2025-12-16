@@ -11,5 +11,9 @@ module com.example.storageinventory {
 
     opens com.example.storageinventory to javafx.fxml, org.hibernate.orm.core;
 
+    opens com.example.storageinventory.model to org.hibernate.orm.core;
+
     exports com.example.storageinventory;
+
+    exports com.example.storageinventory.util;
 }

@@ -18,5 +18,7 @@
 
         <property name="hbm2ddl.auto">update</property>
 
+        <mapping class="com.example.storageinventory.model.UserRole"/>
+        <mapping class="com.example.storageinventory.model.User"/>
     </session-factory>
 </hibernate-configuration>
