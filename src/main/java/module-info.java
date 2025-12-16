@@ -10,10 +10,9 @@ module com.example.storageinventory {
     requires org.apache.logging.log4j;
 
     opens com.example.storageinventory to javafx.fxml, org.hibernate.orm.core;
-
     opens com.example.storageinventory.model to org.hibernate.orm.core;
+    opens com.example.storageinventory.controller to javafx.fxml;
 
     exports com.example.storageinventory;
-
     exports com.example.storageinventory.util;
 }
