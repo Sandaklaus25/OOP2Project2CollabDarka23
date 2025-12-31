@@ -88,6 +88,34 @@ public class ProductListController {
 
     @FXML
     public void onAddProduct() {
-        System.out.println("Тук скоро ще отваряме форма за добавяне...");
+        try {
+            // 1. Зареждаме файла за добавяне (диалога)
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/example/storageinventory/product-add-dialog.fxml"));
+            javafx.scene.Parent root = loader.load();
+
+            // 2. Създаваме нов прозорец (Stage)
+            javafx.stage.Stage stage = new javafx.stage.Stage();
+            stage.setTitle("Добавяне на стока");
+            stage.setScene(new javafx.scene.Scene(root));
+
+            // 3. Правим го "Modal" - това означава, че не можеш да цъкаш отзад, докато не затвориш този
+            stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+
+            // 4. Показваме го и чакаме да се затвори (Wait)
+            stage.showAndWait();
+
+            // 5. След като се затвори, проверяваме дали потребителят е натиснал "Запази"
+            // Взимаме контролера на диалога, за да го питаме
+            ProductAddController controller = loader.getController();
+
+            if (controller.isSaveClicked()) {
+                // Ако е натиснал Save, презареждаме таблицата, за да видим новата стока
+                loadData();
+                System.out.println("✅ Таблицата е обновена!");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
