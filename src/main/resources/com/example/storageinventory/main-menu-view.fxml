@@ -8,6 +8,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.layout.HBox?>
 <BorderPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.example.storageinventory.controller.MainMenuController"
@@ -22,6 +23,9 @@
                         <MenuItem text="Клиенти" />
                         <MenuItem text="Доставчици" onAction="#onShowSuppliers"/>
                     </items>
+                </Menu>
+                <Menu text="Операции">
+                    <MenuItem text="Доставка (Вход)" onAction="#onShowDeliveries"/>
                 </Menu>
                 <Menu text="Склад">
                     <items>
@@ -53,5 +57,12 @@
             </Label>
         </VBox>
     </center>
+
+    <bottom>
+        <HBox style="-fx-background-color: #ddd; -fx-padding: 5;">
+            <Label text="Налични средства в касата: " style="-fx-font-weight: bold;"/>
+            <Label fx:id="balanceLabel" text="--- лв." textFill="#007bff" style="-fx-font-weight: bold;"/>
+        </HBox>
+    </bottom>
 
 </BorderPane>

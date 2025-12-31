@@ -1,6 +1,7 @@
 package com.example.storageinventory.controller;
 
 import com.example.storageinventory.model.User;
+import com.example.storageinventory.service.CashRegisterService;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -14,6 +15,10 @@ public class MainMenuController {
 
     // Връзка с главната рамка от FXML файла.
     // Това ни позволява да сменяме съдържанието в средата (Center).
+
+    @FXML
+    private Label balanceLabel;
+
     @FXML
     private BorderPane mainBorderPane;
 
@@ -22,6 +27,20 @@ public class MainMenuController {
 
     @FXML
     private Label roleLabel;
+
+
+    private final CashRegisterService cashService = new CashRegisterService();
+
+    // Този метод се вика автоматично при старт
+    @FXML
+    public void initialize() {
+        updateBalance();
+    }
+
+    public void updateBalance() {
+        Double balance = cashService.getCurrentBalance();
+        balanceLabel.setText(String.format("%.2f лв.", balance));
+    }
 
     /**
      * Този метод се извиква от LoginController след успешен вход.
@@ -43,6 +62,7 @@ public class MainMenuController {
     @FXML
     public void onShowProducts() {
         loadView("/com/example/storageinventory/product-list-view.fxml");
+        updateBalance();
     }
 
     /**
@@ -53,6 +73,13 @@ public class MainMenuController {
     @FXML
     public void onShowSuppliers() {
         loadView("/com/example/storageinventory/supplier-list-view.fxml");
+        updateBalance();
+    }
+
+    @FXML
+    public void onShowDeliveries() {
+        loadView("/com/example/storageinventory/delivery-list-view.fxml");
+        updateBalance();
     }
 
     @FXML

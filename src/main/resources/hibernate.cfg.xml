@@ -22,6 +22,8 @@
         <mapping class="com.example.storageinventory.model.User"/>
         <mapping class="com.example.storageinventory.model.Product"/>
         <mapping class="com.example.storageinventory.model.Supplier"/>
+        <mapping class="com.example.storageinventory.model.CashRegister"/>
+        <mapping class="com.example.storageinventory.model.Delivery"/>
 
 
     </session-factory>
