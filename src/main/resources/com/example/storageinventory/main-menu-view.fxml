@@ -20,7 +20,7 @@
                     <items>
                         <MenuItem text="Стоки" onAction="#onShowProducts"/>
                         <MenuItem text="Клиенти" />
-                        <MenuItem text="Доставчици" />
+                        <MenuItem text="Доставчици" onAction="#onShowSuppliers"/>
                     </items>
                 </Menu>
                 <Menu text="Склад">

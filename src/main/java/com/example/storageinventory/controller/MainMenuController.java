@@ -49,6 +49,12 @@ public class MainMenuController {
      * Действие при кликване на меню "Изход".
      * Затваря прозореца.
      */
+
+    @FXML
+    public void onShowSuppliers() {
+        loadView("/com/example/storageinventory/supplier-list-view.fxml");
+    }
+
     @FXML
     public void onLogout() {
         // Взимаме текущия прозорец чрез някой от елементите (напр. welcomeLabel)
@@ -76,4 +82,6 @@ public class MainMenuController {
             System.err.println("Грешка при зареждане на файл: " + fxmlPath);
         }
     }
+
+
 }
