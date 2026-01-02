@@ -20,7 +20,7 @@
                 <Menu text="Номенклатури">
                     <items>
                         <MenuItem text="Стоки" onAction="#onShowProducts"/>
-                        <MenuItem text="Клиенти" />
+                        <MenuItem text="Клиенти" onAction="#onShowClients"/>
                         <MenuItem text="Доставчици" onAction="#onShowSuppliers"/>
                     </items>
                 </Menu>

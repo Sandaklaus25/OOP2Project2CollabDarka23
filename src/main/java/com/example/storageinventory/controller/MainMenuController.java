@@ -83,6 +83,11 @@ public class MainMenuController {
     }
 
     @FXML
+    public void onShowClients() {
+        loadView("/com/example/storageinventory/client-list-view.fxml");
+    }
+
+    @FXML
     public void onLogout() {
         // Взимаме текущия прозорец чрез някой от елементите (напр. welcomeLabel)
         Stage stage = (Stage) welcomeLabel.getScene().getWindow();
