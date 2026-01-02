@@ -2,18 +2,22 @@ package com.example.storageinventory.controller;
 
 import com.example.storageinventory.model.User;
 import com.example.storageinventory.service.CashRegisterService;
+import com.example.storageinventory.service.NotificationService;
 import com.example.storageinventory.util.UserSession;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.control.Menu;
 import javafx.scene.paint.Color;
 
 import java.io.IOException;
+import java.util.List;
 
 public class MainMenuController {
 
@@ -30,12 +34,19 @@ public class MainMenuController {
     private BorderPane mainBorderPane;
 
     @FXML
+    private VBox dashboardView;
+
+    @FXML
     private Label welcomeLabel;
 
     @FXML
     private Label roleLabel;
 
+    // НОВО: Списъкът за известия
+    @FXML private ListView<String> notificationList;
+
     private final CashRegisterService cashService = new CashRegisterService();
+    private final NotificationService notificationService = new NotificationService();
 
     public static MainMenuController instance;
 
@@ -70,6 +81,19 @@ public class MainMenuController {
 
             // 5. ТУК ЩЕ БЪДЕ СИГУРНОСТТА (скриването на бутони)
             applySecurity(session);
+
+            refreshNotifications();
+        }
+    }
+
+    @FXML
+    public void refreshNotifications() {
+        if (notificationList != null) {
+            List<String> alerts = notificationService.getAlerts();
+            notificationList.getItems().setAll(alerts);
+
+            // Малък трик за оцветяване (опционално, но полезно)
+            // Ако искаш просто текст, горните 2 реда са достатъчни.
         }
     }
 
@@ -84,22 +108,20 @@ public class MainMenuController {
             if (adminMenu != null) {
                 adminMenu.setVisible(false);
             }
-            System.out.println("🔒 Ограничен режим: Оператор");
+            System.out.println("Ограничен режим: Оператор");
         } else {
-            System.out.println("🔓 Пълен достъп: Администратор");
+            System.out.println("Пълен достъп: Администратор");
         }
     }
 
-    /**
-     * Този метод се извиква от LoginController след успешен вход.
-     * Той попълва екрана с данните на влезлия потребител.
-     */
-    public void setLoggedInUser(User user) {
-        if (user != null) {
-            welcomeLabel.setText("Здравей, " + user.getFullName() + "!");
-            if (user.getRole() != null) {
-                roleLabel.setText("Вие сте влезли като: " + user.getRole().getRoleName());
-            }
+    @FXML
+    public void onShowHome() {
+        // Просто връщаме dashboardView в центъра на рамката
+        if (mainBorderPane != null && dashboardView != null) {
+            mainBorderPane.setCenter(dashboardView);
+
+            // Хубаво е да обновим известията, за да са актуални
+            refreshNotifications();
         }
     }
 
