@@ -5,9 +5,14 @@ import com.example.storageinventory.service.ProductService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import java.util.List;
 
@@ -112,6 +117,43 @@ public class ProductListController {
                 // Ако е натиснал Save, презареждаме таблицата, за да видим новата стока
                 loadData();
                 System.out.println("✅ Таблицата е обновена!");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    @FXML
+    public void onEditProduct() {
+        Product selected = productTable.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            System.out.println("⚠️ Изберете стока за редакция!");
+            return;
+        }
+        openDialog(selected); // Подаваме избрания за редакция
+    }
+
+    private void openDialog(Product productToEdit) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/storageinventory/product-add-dialog.fxml"));
+            Parent root = loader.load();
+
+            ProductAddController controller = loader.getController();
+
+            // АКО Е РЕДАКЦИЯ -> Подаваме данните
+            if (productToEdit != null) {
+                controller.setProductForEdit(productToEdit);
+            }
+
+            Stage stage = new Stage();
+            stage.setTitle(productToEdit == null ? "Нова стока" : "Редакция на стока");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+
+            // Ако е натиснат Save -> презареждаме таблицата
+            if (controller.isSaveClicked()) {
+                loadData();
             }
 
         } catch (Exception e) {

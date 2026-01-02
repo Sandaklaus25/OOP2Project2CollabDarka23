@@ -41,5 +41,8 @@
 
         <Button text="Изтрий избран" onAction="#onDeleteClient"
                 style="-fx-background-color: #dc3545; -fx-text-fill: white;"/>
+
+        <Button text="Редактирай избран" onAction="#onEditClient"
+                style="-fx-background-color: #dc3545; -fx-text-fill: white;"/>
     </HBox>
 </VBox>

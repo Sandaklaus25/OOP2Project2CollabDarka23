@@ -18,30 +18,46 @@ public class SupplierAddController {
     private final SupplierService service = new SupplierService();
     private boolean saveClicked = false;
 
+    private Supplier supplierToEdit;
+
+    public void setSupplierForEdit(Supplier supplier) {
+        this.supplierToEdit = supplier;
+        nameField.setText(supplier.getSupplierName());
+        vatField.setText(supplier.getVatNumber());
+        addressField.setText(supplier.getAddress());
+        phoneField.setText(supplier.getPhoneNumber());
+    }
+
     @FXML
     public void onSave() {
         if (nameField.getText().isEmpty()) {
-            errorLabel.setText("Името на фирмата е задължително!");
+            errorLabel.setText("Името е задължително!");
             errorLabel.setVisible(true);
             return;
         }
 
         try {
-            Supplier supplier = new Supplier(
-                    nameField.getText(),
-                    vatField.getText(),
-                    addressField.getText(),
-                    phoneField.getText()
-            );
+            if (supplierToEdit == null) {
+                supplierToEdit = new Supplier(
+                        nameField.getText(),
+                        vatField.getText(),
+                        addressField.getText(),
+                        phoneField.getText()
+                );
+            } else {
+                supplierToEdit.setSupplierName(nameField.getText());
+                supplierToEdit.setVatNumber(vatField.getText());
+                supplierToEdit.setAddress(addressField.getText());
+                supplierToEdit.setPhoneNumber(phoneField.getText());
+            }
 
-            service.saveSupplier(supplier);
+            service.saveSupplier(supplierToEdit);
             saveClicked = true;
             closeDialog();
 
         } catch (Exception e) {
             e.printStackTrace();
             errorLabel.setText("Грешка при запис!");
-            errorLabel.setVisible(true);
         }
     }
 

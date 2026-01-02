@@ -11,9 +11,7 @@ public class ProductService {
         return repository.getAll();
     }
 
-    public void saveProduct(String name, Double deliveryPrice, Double salePrice, Integer criticalMin) {
-        // При създаване на нова стока, количеството обикновено е 0
-        Product product = new Product(name, 0, deliveryPrice, salePrice, criticalMin);
+    public void saveProduct(Product product) {
         repository.save(product);
     }
 

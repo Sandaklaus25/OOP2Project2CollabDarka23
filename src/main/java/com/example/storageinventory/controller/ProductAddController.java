@@ -1,5 +1,6 @@
 package com.example.storageinventory.controller;
 
+import com.example.storageinventory.model.Product;
 import com.example.storageinventory.service.ProductService;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -17,30 +18,76 @@ public class ProductAddController {
     private final ProductService productService = new ProductService();
     private boolean saveClicked = false; // Маркер дали е натиснат бутона Запис
 
+    private Product productToEdit;
+
+    private int hiddenQuantity = 0;
+
+    public void setProductForEdit(Product product) {
+        this.productToEdit = product;
+
+        nameField.setText(product.getProductName());
+        priceInField.setText(String.valueOf(product.getDeliveryPrice()));
+        priceOutField.setText(String.valueOf(product.getSalePrice()));
+
+        if (product.getCriticalMin() != null) {
+            criticalMinField.setText(String.valueOf(product.getCriticalMin()));
+        }
+
+        // ВАЖНО: Запомняме текущата наличност в променливата, а не в поле!
+        this.hiddenQuantity = product.getQuantity();
+    }
+
     @FXML
     public void onSave() {
-        if (!validateInput()) {
+        errorLabel.setVisible(false);
+
+        if (nameField.getText().isEmpty() ||
+                priceInField.getText().isEmpty() ||
+                priceOutField.getText().isEmpty()) { // Вече не проверяваме quantityField
+
+            errorLabel.setText("Моля, попълнете име и цени!");
+            errorLabel.setVisible(true);
             return;
         }
 
         try {
-            // Взимаме данните от полетата и ги превръщаме в числа
             String name = nameField.getText();
-            Double priceIn = Double.parseDouble(priceInField.getText());
-            Double priceOut = Double.parseDouble(priceOutField.getText());
-            Integer criticalMin = Integer.parseInt(criticalMinField.getText());
+            double dPrice = Double.parseDouble(priceInField.getText());
+            double sPrice = Double.parseDouble(priceOutField.getText());
 
-            // Викаме сървиса да запише в базата
-            productService.saveProduct(name, priceIn, priceOut, criticalMin);
+            int critMin = 0;
+            if (!criticalMinField.getText().isEmpty()) {
+                critMin = Integer.parseInt(criticalMinField.getText());
+            }
+
+            // Тук ползваме скритата променлива hiddenQuantity
+            // Ако е нов продукт, тя си е 0.
+            // Ако е редакция, тя пази старото число (напр. 10).
+
+            if (productToEdit == null) {
+                // Нов продукт (hiddenQuantity е 0)
+                productToEdit = new Product(name, hiddenQuantity, dPrice, sPrice, critMin);
+            } else {
+                // Редакция
+                productToEdit.setProductName(name);
+                productToEdit.setQuantity(hiddenQuantity); // Връщаме старата наличност!
+                productToEdit.setDeliveryPrice(dPrice);
+                productToEdit.setSalePrice(sPrice);
+                productToEdit.setCriticalMin(critMin);
+            }
+
+            productService.saveProduct(productToEdit);
 
             saveClicked = true;
             closeDialog();
 
         } catch (NumberFormatException e) {
-            showError("Моля, въведете валидни числа за цените (напр. 10.50)!");
+            errorLabel.setText("Грешка: Въведете валидни числа!");
+            errorLabel.setVisible(true);
         } catch (Exception e) {
             e.printStackTrace();
-            showError("Грешка при запис в базата!");
+            errorLabel.setText("Техническа грешка!");
+            errorLabel.setVisible(true);
         }
     }
 

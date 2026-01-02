@@ -18,6 +18,16 @@ public class ClientAddController {
     private final ClientService service = new ClientService();
     private boolean saveClicked = false;
 
+    private Client clientToEdit;
+
+    public void setClientForEdit(Client client) {
+        this.clientToEdit = client;
+        nameField.setText(client.getClientName());
+        vatField.setText(client.getVatNumber());
+        addressField.setText(client.getAddress());
+        phoneField.setText(client.getPhoneNumber());
+    }
+
     @FXML
     public void onSave() {
         if (nameField.getText().isEmpty()) {
@@ -27,14 +37,24 @@ public class ClientAddController {
         }
 
         try {
-            Client client = new Client(
-                    nameField.getText(),
-                    vatField.getText(),
-                    addressField.getText(),
-                    phoneField.getText()
-            );
+            // ЛОГИКА ЗА РЕДАКЦИЯ VS НОВ
+            if (clientToEdit == null) {
+                // НОВ КЛИЕНТ
+                clientToEdit = new Client(
+                        nameField.getText(),
+                        vatField.getText(),
+                        addressField.getText(),
+                        phoneField.getText()
+                );
+            } else {
+                // РЕДАКЦИЯ (Обновяваме стария обект)
+                clientToEdit.setClientName(nameField.getText());
+                clientToEdit.setVatNumber(vatField.getText());
+                clientToEdit.setAddress(addressField.getText());
+                clientToEdit.setPhoneNumber(phoneField.getText());
+            }
 
-            service.saveClient(client);
+            service.saveClient(clientToEdit);
             saveClicked = true;
             closeDialog();
 

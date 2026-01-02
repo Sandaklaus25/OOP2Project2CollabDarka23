@@ -4,9 +4,14 @@ import com.example.storageinventory.model.Client;
 import com.example.storageinventory.service.ClientService;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 public class ClientListController {
 
@@ -60,6 +65,35 @@ public class ClientListController {
                 loadData(); // Презарежда таблицата след успешен запис
             }
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void onEditClient() {
+        Client selected = clientTable.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            System.out.println("⚠️ Избери клиент!");
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/storageinventory/client-add-dialog.fxml"));
+            Parent root = loader.load();
+
+            ClientAddController controller = loader.getController();
+            controller.setClientForEdit(selected); // <-- ПОДАВАМЕ ГО
+
+            Stage stage = new Stage();
+            stage.setTitle("Редакция на клиент");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+
+            if (controller.isSaveClicked()) {
+                loadData();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

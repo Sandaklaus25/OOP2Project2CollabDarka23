@@ -12,7 +12,7 @@ public class ClientRepository {
         Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            session.persist(client);
+            session.merge(client);
             tx.commit();
         } catch (Exception e) {
             if (tx != null) tx.rollback();

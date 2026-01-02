@@ -12,7 +12,7 @@ public class SupplierRepository {
         Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            session.persist(supplier);
+            session.merge(supplier);
             tx.commit();
         } catch (Exception e) {
             if (tx != null) tx.rollback();

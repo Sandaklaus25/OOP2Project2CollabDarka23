@@ -12,7 +12,7 @@ public class ProductRepository {
         Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
-            session.persist(product);
+            session.merge(product);
             tx.commit();
         } catch (Exception e) {
             if (tx != null) tx.rollback();
