@@ -17,6 +17,9 @@
     <top>
         <MenuBar BorderPane.alignment="CENTER">
             <menus>
+                <Menu fx:id="adminMenu" text="Администрация">
+                    <MenuItem text="Добави нов потребител" onAction="#onRegisterUser"/>
+                </Menu>
                 <Menu text="Номенклатури">
                     <items>
                         <MenuItem text="Стоки" onAction="#onShowProducts"/>

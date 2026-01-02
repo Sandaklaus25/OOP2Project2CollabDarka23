@@ -25,12 +25,12 @@
 
     <VBox spacing="5" alignment="CENTER_LEFT">
         <Label text="Потребителско име:"/>
-        <TextField fx:id="usernameField" promptText="admin"/>
+        <TextField fx:id="usernameField" promptText=""/>
     </VBox>
 
     <VBox spacing="5" alignment="CENTER_LEFT">
         <Label text="Парола:"/>
-        <PasswordField fx:id="passwordField" promptText="admin123"/>
+        <PasswordField fx:id="passwordField" promptText=""/>
     </VBox>
 
     <Label fx:id="errorLabel" textFill="RED" visible="false"/>
