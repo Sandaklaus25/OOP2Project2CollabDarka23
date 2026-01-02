@@ -28,12 +28,14 @@ public class MainMenuController {
     @FXML
     private Label roleLabel;
 
-
     private final CashRegisterService cashService = new CashRegisterService();
+
+    public static MainMenuController instance;
 
     // Този метод се вика автоматично при старт
     @FXML
     public void initialize() {
+        instance = this;
         updateBalance();
     }
 
@@ -85,6 +87,12 @@ public class MainMenuController {
     @FXML
     public void onShowClients() {
         loadView("/com/example/storageinventory/client-list-view.fxml");
+    }
+
+    @FXML
+    public void onShowSales() {
+        loadView("/com/example/storageinventory/sale-list-view.fxml");
+        updateBalance(); // Обновяваме парите след продажба
     }
 
     @FXML

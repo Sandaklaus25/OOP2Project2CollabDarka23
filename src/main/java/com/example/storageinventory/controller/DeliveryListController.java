@@ -58,6 +58,10 @@ public class DeliveryListController {
             DeliveryAddController controller = loader.getController();
             if (controller.isSaveClicked()) {
                 loadData(); // Презарежда таблицата след успешен запис
+
+                if (MainMenuController.instance != null) {
+                    MainMenuController.instance.updateBalance();
+                }
             }
 
         } catch (Exception e) {

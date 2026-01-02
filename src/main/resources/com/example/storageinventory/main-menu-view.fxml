@@ -25,7 +25,8 @@
                     </items>
                 </Menu>
                 <Menu text="Операции">
-                    <MenuItem text="Доставка (Вход)" onAction="#onShowDeliveries"/>
+                    <MenuItem text="Доставка" onAction="#onShowDeliveries"/>
+                    <MenuItem text="Продажба" onAction="#onShowSales"/>
                 </Menu>
                 <Menu text="Склад">
                     <items>

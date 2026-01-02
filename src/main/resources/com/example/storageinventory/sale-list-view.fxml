@@ -11,23 +11,23 @@
 
 <VBox spacing="10.0" xmlns="http://javafx.com/javafx/21"
       xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.example.storageinventory.controller.DeliveryListController">
+      fx:controller="com.example.storageinventory.controller.SaleListController">
 
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
     </padding>
 
-    <Label text="История на Доставките (Вход)">
+    <Label text="Изписване на стока (Продажби)">
         <font>
             <Font name="System Bold" size="20.0"/>
         </font>
     </Label>
 
-    <TableView fx:id="deliveryTable" VBox.vgrow="ALWAYS">
+    <TableView fx:id="saleTable" VBox.vgrow="ALWAYS">
         <columns>
             <TableColumn fx:id="colDate" text="Дата" prefWidth="100.0"/>
-            <TableColumn fx:id="colInvoice" text="Фактура №" prefWidth="100.0"/>
-            <TableColumn fx:id="colSupplier" text="Доставчик" prefWidth="200.0"/>
+            <TableColumn fx:id="colDoc" text="Документ" prefWidth="100.0"/>
+            <TableColumn fx:id="colClient" text="Клиент" prefWidth="200.0"/>
             <TableColumn fx:id="colProduct" text="Стока" prefWidth="200.0"/>
             <TableColumn fx:id="colQuantity" text="Количество" prefWidth="80.0"/>
         </columns>
@@ -37,7 +37,7 @@
     </TableView>
 
     <HBox spacing="10.0" alignment="CENTER_RIGHT">
-        <Button text="Приеми нова стока" onAction="#onAddDelivery"
-                style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-weight: bold;"/>
+        <Button text="Нова продажба" onAction="#onAddSale"
+                style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-weight: bold;"/>
     </HBox>
 </VBox>
