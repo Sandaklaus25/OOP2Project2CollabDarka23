@@ -35,9 +35,9 @@ public class LoginController {
 
         if (user != null) {
             try {
-                // ✅ ВАЖНО: Тук стартираме сесията!
-                // Вече цялото приложение ще знае кой е влязъл.
+
                 UserSession.startSession(user);
+                UserSession.setCurrentUser(user);
 
                 // 2. Скриваме Login прозореца
                 Stage loginStage = (Stage) errorLabel.getScene().getWindow();

@@ -15,6 +15,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.control.Menu;
 import javafx.scene.paint.Color;
+import com.example.storageinventory.util.ReportType;
 
 import java.io.IOException;
 import java.util.List;
@@ -161,7 +162,6 @@ public class MainMenuController {
         loadView("/com/example/storageinventory/delivery-list-view.fxml");
         updateBalance();
     }
-
     @FXML
     public void onShowClients() {
         loadView("/com/example/storageinventory/client-list-view.fxml");
@@ -171,6 +171,55 @@ public class MainMenuController {
     public void onShowSales() {
         loadView("/com/example/storageinventory/sale-list-view.fxml");
         updateBalance(); // Обновяваме парите след продажба
+    }
+
+    @FXML
+    public void onReportDeliveries() {
+        openReportWindow(ReportType.DELIVERIES);
+    }
+
+    @FXML
+    public void onReportSales() {
+        openReportWindow(ReportType.SALES);
+    }
+
+    @FXML
+    public void onReportInventory() {
+        openReportWindow(ReportType.INVENTORY);
+    }
+
+    @FXML
+    public void onReportFinancial() {
+        openReportWindow(ReportType.FINANCIAL);
+    }
+
+    @FXML
+    public void onReportCash() {
+        openReportWindow(ReportType.CASH_FLOW);
+    }
+
+    @FXML
+    public void onReportOperators() {
+        openReportWindow(ReportType.OPERATORS);
+    }
+
+    private void openReportWindow(ReportType type) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/storageinventory/report-view.fxml"));
+            Parent root = loader.load();
+
+            // Взимаме контролера на справката и му казваме каква справка да покаже
+            ReportController controller = loader.getController();
+            controller.initReport(type);
+
+            Stage stage = new Stage();
+            stage.setTitle("Справка: " + type.getTitle()); // Заглавието се сменя динамично
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML

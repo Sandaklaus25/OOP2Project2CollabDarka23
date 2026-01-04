@@ -32,7 +32,11 @@ public class Sale {
     @Column(name = "sale_date")
     private LocalDate saleDate;
 
-    // Конструктори
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User operator;
+
+
     public Sale() {
         this.saleDate = LocalDate.now();
     }
@@ -45,7 +49,6 @@ public class Sale {
         this.saleDate = LocalDate.now();
     }
 
-    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -63,4 +66,8 @@ public class Sale {
 
     public LocalDate getSaleDate() { return saleDate; }
     public void setSaleDate(LocalDate saleDate) { this.saleDate = saleDate; }
+
+    public User getOperator() { return operator; }
+    public void setOperator(User operator) { this.operator = operator; }
+
 }

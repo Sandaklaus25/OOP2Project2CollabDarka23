@@ -32,7 +32,11 @@ public class Delivery {
     @Column(name = "delivery_date")
     private LocalDate deliveryDate;
 
-    // Конструктори
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User operator;
+
+
     public Delivery() {
         this.deliveryDate = LocalDate.now(); // По подразбиране - днешна дата
     }
@@ -63,4 +67,7 @@ public class Delivery {
 
     public LocalDate getDeliveryDate() { return deliveryDate; }
     public void setDeliveryDate(LocalDate deliveryDate) { this.deliveryDate = deliveryDate; }
+
+    public User getOperator() { return operator; }
+    public void setOperator(User operator) { this.operator = operator; }
 }

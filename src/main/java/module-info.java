@@ -8,6 +8,7 @@ module com.example.storageinventory {
     requires jakarta.persistence;
 
     requires org.apache.logging.log4j;
+    //requires com.example.storageinventory;
 
     opens com.example.storageinventory to javafx.fxml, org.hibernate.orm.core;
     opens com.example.storageinventory.model to org.hibernate.orm.core, javafx.base;

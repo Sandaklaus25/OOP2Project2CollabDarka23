@@ -3,7 +3,9 @@ package com.example.storageinventory.repository;
 import com.example.storageinventory.model.CashRegister;
 import com.example.storageinventory.model.Delivery;
 import com.example.storageinventory.model.Product;
+import com.example.storageinventory.model.User;
 import com.example.storageinventory.util.HibernateUtil;
+import com.example.storageinventory.util.UserSession;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -45,6 +47,10 @@ public class DeliveryRepository {
             // 4. СТОКА
             managedProduct.setQuantity(managedProduct.getQuantity() + delivery.getQuantity());
             session.merge(managedProduct);
+
+            // ВАЖНО: Тук взимаме текущия потребител!
+            User currentUser = UserSession.getCurrentUser();
+            delivery.setOperator(currentUser); // <-- Ето тук става магията
 
             // 5. ЗАПИС
             session.persist(delivery);

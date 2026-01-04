@@ -3,7 +3,9 @@ package com.example.storageinventory.repository;
 import com.example.storageinventory.model.CashRegister;
 import com.example.storageinventory.model.Product;
 import com.example.storageinventory.model.Sale;
+import com.example.storageinventory.model.User;
 import com.example.storageinventory.util.HibernateUtil;
+import com.example.storageinventory.util.UserSession;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -35,6 +37,10 @@ public class SaleRepository {
             // 4. ОБНОВЯВАНЕ (Намаляваме стоката, увеличаваме парите)
             product.setQuantity(product.getQuantity() - sale.getQuantity());
             cashRegister.setBalance(cashRegister.getBalance() + totalIncome);
+
+            // ВАЖНО: Тук взимаме текущия потребител!
+            User currentUser = UserSession.getCurrentUser();
+            sale.setOperator(currentUser); // <-- Ето тук става магията
 
             // 5. ЗАПИС
             session.merge(product);

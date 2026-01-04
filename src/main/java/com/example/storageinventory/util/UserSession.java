@@ -8,7 +8,7 @@ public class UserSession {
     private static UserSession instance;
 
     // 2. Полето за самия потребител
-    private User currentUser;
+    private static User currentUser;
 
     // 3. Частен конструктор (за да не може някой да прави new UserSession() безразборно)
     private UserSession(User user) {
@@ -31,11 +31,14 @@ public class UserSession {
         instance = null;
     }
 
-    public User getCurrentUser() {
+    public static User getCurrentUser() {
         return currentUser;
     }
 
-    // 7. Проверка дали е Админ (бъркаме през User -> Role -> RoleName)
+    public static void setCurrentUser(User user) {
+        currentUser = user;
+    }
+
     public boolean isAdmin() {
         if (currentUser != null && currentUser.getRole() != null) {
             String roleName = currentUser.getRole().getRoleName();
