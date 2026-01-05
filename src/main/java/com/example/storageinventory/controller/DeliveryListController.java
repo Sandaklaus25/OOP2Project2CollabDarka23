@@ -9,30 +9,37 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class DeliveryListController {
 
-    @FXML private TableView<Delivery> deliveryTable;
-    @FXML private TableColumn<Delivery, String> colDate;
-    @FXML private TableColumn<Delivery, String> colInvoice;
-    @FXML private TableColumn<Delivery, String> colSupplier;
-    @FXML private TableColumn<Delivery, String> colProduct;
-    @FXML private TableColumn<Delivery, Integer> colQuantity;
+    @FXML
+    private TableView<Delivery> deliveryTable;
+    @FXML
+    private TableColumn<Delivery, String> colDate;
+    @FXML
+    private TableColumn<Delivery, String> colInvoice;
+    @FXML
+    private TableColumn<Delivery, String> colSupplier;
+    @FXML
+    private TableColumn<Delivery, String> colProduct;
+    @FXML
+    private TableColumn<Delivery, Integer> colQuantity;
+
+    private static final Logger logger = Logger.getLogger(DeliveryListController.class.getName());
 
     private final DeliveryService service = new DeliveryService();
 
     @FXML
     public void initialize() {
-        // Стандартни колони
         colDate.setCellValueFactory(new PropertyValueFactory<>("deliveryDate"));
         colInvoice.setCellValueFactory(new PropertyValueFactory<>("invoiceNumber"));
         colQuantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
 
-        // СПЕЦИАЛНИ КОЛОНИ (Вложени обекти)
-        // Тук казваме: "Влез в Supplier и вземи името му"
         colSupplier.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().getSupplier().getSupplierName()));
 
-        // Тук казваме: "Влез в Product и вземи името му"
         colProduct.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().getProduct().getProductName()));
 
@@ -57,7 +64,7 @@ public class DeliveryListController {
 
             DeliveryAddController controller = loader.getController();
             if (controller.isSaveClicked()) {
-                loadData(); // Презарежда таблицата след успешен запис
+                loadData();
 
                 if (MainMenuController.instance != null) {
                     MainMenuController.instance.updateBalance();
@@ -65,7 +72,7 @@ public class DeliveryListController {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Грешка при добавяне на доставка!", e);
         }
     }
 }

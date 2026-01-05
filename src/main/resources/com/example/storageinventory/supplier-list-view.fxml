@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.control.Button?>
 <VBox spacing="10.0" xmlns="http://javafx.com/javafx/21"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.example.storageinventory.controller.SupplierListController">
@@ -44,7 +40,7 @@
                 style="-fx-background-color: #dc3545; -fx-text-fill: white;"/>
 
         <Button text="Редактирай избран" onAction="#onEditSupplier"
-                style="-fx-background-color: #dc3545; -fx-text-fill: white;"/>
+                style="-fx-background-color: #FF9800; -fx-text-fill: white;"/>
     </HBox>
 
 </VBox>

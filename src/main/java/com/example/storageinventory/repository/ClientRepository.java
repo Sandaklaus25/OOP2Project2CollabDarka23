@@ -4,9 +4,14 @@ import com.example.storageinventory.model.Client;
 import com.example.storageinventory.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ClientRepository {
+
+    private static final Logger logger = Logger.getLogger(ClientRepository.class.getName());
 
     public void save(Client client) {
         Transaction tx = null;
@@ -16,7 +21,7 @@ public class ClientRepository {
             tx.commit();
         } catch (Exception e) {
             if (tx != null) tx.rollback();
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Грешка при записването на клиент!", e);
         }
     }
 
@@ -34,7 +39,7 @@ public class ClientRepository {
             tx.commit();
         } catch (Exception e) {
             if (tx != null) tx.rollback();
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Грешка при премахването на клиент!", e);
         }
     }
 }

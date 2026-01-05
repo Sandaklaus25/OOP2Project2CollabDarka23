@@ -2,7 +2,7 @@ package com.example.storageinventory.controller;
 
 import com.example.storageinventory.model.User;
 import com.example.storageinventory.service.UserService;
-import com.example.storageinventory.util.UserSession; // Импортираме сесията
+import com.example.storageinventory.util.UserSession;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -11,11 +11,19 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class LoginController {
 
-    @FXML private TextField usernameField;
-    @FXML private PasswordField passwordField;
-    @FXML private Label errorLabel;
+    @FXML
+    private TextField usernameField;
+    @FXML
+    private PasswordField passwordField;
+    @FXML
+    private Label errorLabel;
+
+    private static final Logger logger = Logger.getLogger(LoginController.class.getName());
 
     private final UserService userService = new UserService();
 
@@ -30,7 +38,6 @@ public class LoginController {
             return;
         }
 
-        // 1. Питаме сървиса: "Има ли такъв човек?"
         User user = userService.authenticate(username, password);
 
         if (user != null) {
@@ -39,17 +46,13 @@ public class LoginController {
                 UserSession.startSession(user);
                 UserSession.setCurrentUser(user);
 
-                // 2. Скриваме Login прозореца
+                // Скриваме Login прозореца
                 Stage loginStage = (Stage) errorLabel.getScene().getWindow();
                 loginStage.close();
 
-                // 3. Зареждаме Главното меню
+                // Зареждаме главното меню
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/storageinventory/main-menu-view.fxml"));
                 Scene scene = new Scene(loader.load());
-
-                // (Вече НЕ ни трябва: controller.setLoggedInUser(user), защото имаме UserSession)
-
-                // 4. Отваряме новия прозорец
                 Stage mainStage = new Stage();
                 mainStage.setTitle("Складова система - Главно Меню");
                 mainStage.setScene(scene);
@@ -57,12 +60,11 @@ public class LoginController {
                 mainStage.show();
 
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.log(Level.SEVERE, "Грешка при зареждане на главното меню!", e);
                 errorLabel.setText("Критична грешка при зареждане на менюто!");
                 errorLabel.setVisible(true);
             }
         } else {
-            // Ако user е null, значи грешна парола
             errorLabel.setText("Грешно потребителско име или парола!");
             errorLabel.setVisible(true);
         }

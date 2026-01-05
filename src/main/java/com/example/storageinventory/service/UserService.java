@@ -1,23 +1,24 @@
 package com.example.storageinventory.service;
 
 import com.example.storageinventory.model.User;
+import com.example.storageinventory.model.UserRole;
 import com.example.storageinventory.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
-import com.example.storageinventory.model.UserRole; // Импортирай модела
+
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class UserService {
+
+    private static final Logger logger = Logger.getLogger(UserService.class.getName());
 
     public User authenticate(String username, String password) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
 
-            // ВАЖНО: Ползваме "JOIN FETCH u.role", за да заредим ролята веднага!
-            Query<User> query = session.createQuery(
-                    "FROM User u JOIN FETCH u.role WHERE u.username = :user",
-                    User.class
-            );
+            Query<User> query = session.createQuery("FROM User u JOIN FETCH u.role WHERE u.username = :user", User.class);
             query.setParameter("user", username);
 
             User user = query.uniqueResult();
@@ -27,7 +28,7 @@ public class UserService {
                 return user;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Критична грешка при автентикация на потребител!", e);
         }
         return null; // Връща null, ако няма такъв user или паролата е грешна
     }
@@ -38,9 +39,7 @@ public class UserService {
             tx = session.beginTransaction();
 
             // Проверка дали username е свободен
-            Long count = session.createQuery("SELECT count(u) FROM User u WHERE u.username = :name", Long.class)
-                    .setParameter("name", user.getUsername())
-                    .uniqueResult();
+            Long count = session.createQuery("SELECT count(u) FROM User u WHERE u.username = :name", Long.class).setParameter("name", user.getUsername()).uniqueResult();
 
             if (count > 0) {
                 throw new Exception("Потребителското име вече е заето!");
@@ -53,6 +52,7 @@ public class UserService {
             throw e;
         }
     }
+
     public List<UserRole> getAllRoles() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery("FROM UserRole", UserRole.class).list();

@@ -13,6 +13,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class DeliveryAddController {
 
     @FXML private ComboBox<Supplier> supplierCombo;
@@ -21,7 +24,8 @@ public class DeliveryAddController {
     @FXML private TextField quantityField;
     @FXML private Label errorLabel;
 
-    // Трябват ни и трите сървиса
+    private static final Logger logger = Logger.getLogger(DeliveryAddController.class.getName());
+
     private final DeliveryService deliveryService = new DeliveryService();
     private final ProductService productService = new ProductService();
     private final SupplierService supplierService = new SupplierService();
@@ -30,7 +34,6 @@ public class DeliveryAddController {
 
     @FXML
     public void initialize() {
-        // 1. Зареждаме данните в падащите менюта
         supplierCombo.setItems(FXCollections.observableArrayList(supplierService.getAllSuppliers()));
         productCombo.setItems(FXCollections.observableArrayList(productService.getAllProducts()));
     }
@@ -66,31 +69,27 @@ public class DeliveryAddController {
         } catch (NumberFormatException e) {
             showError("Моля въведете цяло число за количество!");
         } catch (Exception e) {
-            e.printStackTrace(); // Винаги полезно за дебъг
+            logger.log(Level.SEVERE, "Грешка при запазване на доставка!", e);
 
-            // Търсене на нашето съобщение (рекурсивно)
             String realMessage = getRootMessage(e);
 
             if (realMessage.contains("НЕДОСТАТЪЧНО") || realMessage.contains("Касата")) {
                 showError(realMessage);
             } else {
-                // Ако е нещо друго, показваме го, но може да е техническо
                 showError("Грешка: " + realMessage);
             }
         }
     }
 
-    // Помощен метод, който "рови" до дъното на грешката
+    // Помощен метод за намиране на ключовата грешка
     private String getRootMessage(Throwable t) {
-        // Първо проверяваме дали текущата грешка съдържа нашия ключ
         if (t.getMessage() != null && t.getMessage().contains("НЕДОСТАТЪЧНО")) {
             return t.getMessage();
         }
-        // Ако не, и има причина (cause), слизаме надолу
+        // Рекурсия
         if (t.getCause() != null) {
             return getRootMessage(t.getCause());
         }
-        // Ако сме на дъното, връщаме каквото има
         return t.getMessage() != null ? t.getMessage() : "Неизвестна грешка";
     }
 

@@ -24,7 +24,8 @@ public class Client {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    public Client() {}
+    public Client() {
+    }
 
     public Client(String clientName, String vatNumber, String address, String phoneNumber) {
         this.clientName = clientName;
@@ -34,23 +35,48 @@ public class Client {
     }
 
     // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getClientName() { return clientName; }
-    public void setClientName(String clientName) { this.clientName = clientName; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getVatNumber() { return vatNumber; }
-    public void setVatNumber(String vatNumber) { this.vatNumber = vatNumber; }
+    public String getClientName() {
+        return clientName;
+    }
 
-    public String getAddress() { return address; }
-    public void setAddress(String address) { this.address = address; }
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
+    }
 
-    public String getPhoneNumber() { return phoneNumber; }
-    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
+    public String getVatNumber() {
+        return vatNumber;
+    }
+
+    public void setVatNumber(String vatNumber) {
+        this.vatNumber = vatNumber;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
     @Override
     public String toString() {
-        return clientName; // Важно за падащите менюта
+        return clientName;
     }
 }

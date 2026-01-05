@@ -9,14 +9,25 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class SaleListController {
 
-    @FXML private TableView<Sale> saleTable;
-    @FXML private TableColumn<Sale, String> colDate;
-    @FXML private TableColumn<Sale, String> colDoc;
-    @FXML private TableColumn<Sale, String> colClient;
-    @FXML private TableColumn<Sale, String> colProduct;
-    @FXML private TableColumn<Sale, Integer> colQuantity;
+    @FXML
+    private TableView<Sale> saleTable;
+    @FXML
+    private TableColumn<Sale, String> colDate;
+    @FXML
+    private TableColumn<Sale, String> colDoc;
+    @FXML
+    private TableColumn<Sale, String> colClient;
+    @FXML
+    private TableColumn<Sale, String> colProduct;
+    @FXML
+    private TableColumn<Sale, Integer> colQuantity;
+
+    private static final Logger logger = Logger.getLogger(SaleListController.class.getName());
 
     private final SaleService service = new SaleService();
 
@@ -27,11 +38,9 @@ public class SaleListController {
         colQuantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
 
         // Вадим имената от вложените обекти
-        colClient.setCellValueFactory(cell ->
-                new SimpleStringProperty(cell.getValue().getClient().getClientName()));
+        colClient.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getClient().getClientName()));
 
-        colProduct.setCellValueFactory(cell ->
-                new SimpleStringProperty(cell.getValue().getProduct().getProductName()));
+        colProduct.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getProduct().getProductName()));
 
         loadData();
     }
@@ -62,7 +71,7 @@ public class SaleListController {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Грешка при добавянето на продажба!", e);
         }
     }
 }

@@ -4,30 +4,25 @@ import com.example.storageinventory.model.User;
 
 public class UserSession {
 
-    // 1. Статична променлива - тук ще пазим "кой е влязъл"
     private static UserSession instance;
 
-    // 2. Полето за самия потребител
     private static User currentUser;
 
-    // 3. Частен конструктор (за да не може някой да прави new UserSession() безразборно)
     private UserSession(User user) {
-        this.currentUser = user;
+        currentUser = user;
     }
 
-    // 4. Метод за стартиране на сесията (вика се при Успешен Вход)
     public static void startSession(User user) {
         instance = new UserSession(user);
-        System.out.println("🔑 Сесията стартира за: " + user.getUsername() + " [" + user.getRole().getRoleName() + "]");
+        System.out.println("Сесията стартира за: " + user.getUsername() + " [" + user.getRole().getRoleName() + "]");
     }
 
-    // 5. Метод за достъп до сесията отвсякъде
     public static UserSession getInstance() {
         return instance;
     }
 
-    // 6. Метод за изчистване (при Изход/Logout)
     public static void cleanSession() {
+        currentUser = null;
         instance = null;
     }
 

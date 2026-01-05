@@ -1,8 +1,10 @@
 package com.example.storageinventory.model;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDate;
 
+@SuppressWarnings("unused")
 @Entity
 @Table(name = "DELIVERY")
 public class Delivery {
@@ -13,12 +15,12 @@ public class Delivery {
     @Column(name = "delivery_id")
     private Long id;
 
-    // ВРЪЗКА КЪМ ДОСТАВЧИК: Много доставки могат да са от един доставчик
+    // Много доставки могат да са от един доставчик
     @ManyToOne
     @JoinColumn(name = "supplier_id", nullable = false)
     private Supplier supplier;
 
-    // ВРЪЗКА КЪМ СТОКА: Много доставки могат да са за една стока
+    // Много доставки могат да са за една стока
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
@@ -38,7 +40,7 @@ public class Delivery {
 
 
     public Delivery() {
-        this.deliveryDate = LocalDate.now(); // По подразбиране - днешна дата
+        this.deliveryDate = LocalDate.now(); // По подразбиране: днешна дата
     }
 
     public Delivery(Supplier supplier, Product product, int quantity, String invoiceNumber) {
@@ -50,24 +52,59 @@ public class Delivery {
     }
 
     // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public Supplier getSupplier() { return supplier; }
-    public void setSupplier(Supplier supplier) { this.supplier = supplier; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public Product getProduct() { return product; }
-    public void setProduct(Product product) { this.product = product; }
+    public Supplier getSupplier() {
+        return supplier;
+    }
 
-    public int getQuantity() { return quantity; }
-    public void setQuantity(int quantity) { this.quantity = quantity; }
+    public void setSupplier(Supplier supplier) {
+        this.supplier = supplier;
+    }
 
-    public String getInvoiceNumber() { return invoiceNumber; }
-    public void setInvoiceNumber(String invoiceNumber) { this.invoiceNumber = invoiceNumber; }
+    public Product getProduct() {
+        return product;
+    }
 
-    public LocalDate getDeliveryDate() { return deliveryDate; }
-    public void setDeliveryDate(LocalDate deliveryDate) { this.deliveryDate = deliveryDate; }
+    public void setProduct(Product product) {
+        this.product = product;
+    }
 
-    public User getOperator() { return operator; }
-    public void setOperator(User operator) { this.operator = operator; }
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public String getInvoiceNumber() {
+        return invoiceNumber;
+    }
+
+    public void setInvoiceNumber(String invoiceNumber) {
+        this.invoiceNumber = invoiceNumber;
+    }
+
+    public LocalDate getDeliveryDate() {
+        return deliveryDate;
+    }
+
+    public void setDeliveryDate(LocalDate deliveryDate) {
+        this.deliveryDate = deliveryDate;
+    }
+
+    public User getOperator() {
+        return operator;
+    }
+
+    public void setOperator(User operator) {
+        this.operator = operator;
+    }
 }

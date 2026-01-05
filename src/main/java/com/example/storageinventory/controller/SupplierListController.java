@@ -5,25 +5,36 @@ import com.example.storageinventory.service.SupplierService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class SupplierListController {
 
-    @FXML private TableView<Supplier> supplierTable;
-    @FXML private TableColumn<Supplier, Long> colId;
-    @FXML private TableColumn<Supplier, String> colName;
-    @FXML private TableColumn<Supplier, String> colVat;
-    @FXML private TableColumn<Supplier, String> colAddress;
-    @FXML private TableColumn<Supplier, String> colPhone;
+    @FXML
+    private TableView<Supplier> supplierTable;
+    @FXML
+    private TableColumn<Supplier, Long> colId;
+    @FXML
+    private TableColumn<Supplier, String> colName;
+    @FXML
+    private TableColumn<Supplier, String> colVat;
+    @FXML
+    private TableColumn<Supplier, String> colAddress;
+    @FXML
+    private TableColumn<Supplier, String> colPhone;
 
     private final SupplierService supplierService = new SupplierService();
+
+    private static final Logger logger = Logger.getLogger(SupplierListController.class.getName());
 
     @FXML
     public void initialize() {
@@ -69,7 +80,7 @@ public class SupplierListController {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Грешка при добавяне на доставчик!", e);
         }
     }
 
@@ -95,7 +106,7 @@ public class SupplierListController {
                 loadData();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Грешка при редакция на доставчик!", e);
         }
     }
 

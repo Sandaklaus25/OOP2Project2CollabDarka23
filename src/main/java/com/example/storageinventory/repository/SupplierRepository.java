@@ -4,9 +4,14 @@ import com.example.storageinventory.model.Supplier;
 import com.example.storageinventory.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SupplierRepository {
+
+    private static final Logger logger = Logger.getLogger(SupplierRepository.class.getName());
 
     public void save(Supplier supplier) {
         Transaction tx = null;
@@ -16,7 +21,7 @@ public class SupplierRepository {
             tx.commit();
         } catch (Exception e) {
             if (tx != null) tx.rollback();
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Грешка при записването на доставчик!", e);
         }
     }
 
@@ -26,7 +31,8 @@ public class SupplierRepository {
         }
     }
 
-    // Ще ни трябва и метод за търсене по ID по-късно
+
+    @SuppressWarnings("unused")
     public Supplier getById(Long id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.get(Supplier.class, id);
@@ -41,7 +47,7 @@ public class SupplierRepository {
             tx.commit();
         } catch (Exception e) {
             if (tx != null) tx.rollback();
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Грешка при изтриването на доставчик!", e);
         }
     }
 }

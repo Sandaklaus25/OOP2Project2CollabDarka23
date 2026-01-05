@@ -7,16 +7,26 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class ClientAddController {
 
-    @FXML private TextField nameField;
-    @FXML private TextField vatField;
-    @FXML private TextField addressField;
-    @FXML private TextField phoneField;
-    @FXML private Label errorLabel;
+    @FXML
+    private TextField nameField;
+    @FXML
+    private TextField vatField;
+    @FXML
+    private TextField addressField;
+    @FXML
+    private TextField phoneField;
+    @FXML
+    private Label errorLabel;
 
     private final ClientService service = new ClientService();
     private boolean saveClicked = false;
+
+    private static final Logger logger = Logger.getLogger(ClientAddController.class.getName());
 
     private Client clientToEdit;
 
@@ -37,17 +47,12 @@ public class ClientAddController {
         }
 
         try {
-            // ЛОГИКА ЗА РЕДАКЦИЯ VS НОВ
+            // Клиент създаване/редакция
             if (clientToEdit == null) {
-                // НОВ КЛИЕНТ
-                clientToEdit = new Client(
-                        nameField.getText(),
-                        vatField.getText(),
-                        addressField.getText(),
-                        phoneField.getText()
-                );
+                // създаване
+                clientToEdit = new Client(nameField.getText(), vatField.getText(), addressField.getText(), phoneField.getText());
             } else {
-                // РЕДАКЦИЯ (Обновяваме стария обект)
+                // редакция
                 clientToEdit.setClientName(nameField.getText());
                 clientToEdit.setVatNumber(vatField.getText());
                 clientToEdit.setAddress(addressField.getText());
@@ -59,7 +64,7 @@ public class ClientAddController {
             closeDialog();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Грешка при запазване на клиент!", e);
             errorLabel.setText("Грешка при запис!");
             errorLabel.setVisible(true);
         }
