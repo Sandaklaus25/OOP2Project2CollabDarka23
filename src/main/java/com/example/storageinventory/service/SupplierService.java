@@ -2,6 +2,7 @@ package com.example.storageinventory.service;
 
 import com.example.storageinventory.model.Supplier;
 import com.example.storageinventory.repository.SupplierRepository;
+
 import java.util.List;
 
 public class SupplierService {

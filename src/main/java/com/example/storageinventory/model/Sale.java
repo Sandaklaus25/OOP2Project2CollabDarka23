@@ -1,8 +1,10 @@
 package com.example.storageinventory.model;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDate;
 
+@SuppressWarnings("unused")
 @Entity
 @Table(name = "SALE")
 public class Sale {
@@ -13,12 +15,10 @@ public class Sale {
     @Column(name = "sale_id")
     private Long id;
 
-    // КЛИЕНТ (на кого продаваме)
     @ManyToOne
     @JoinColumn(name = "client_id", nullable = false)
     private Client client;
 
-    // СТОКА (какво продаваме)
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
@@ -49,25 +49,60 @@ public class Sale {
         this.saleDate = LocalDate.now();
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public Client getClient() { return client; }
-    public void setClient(Client client) { this.client = client; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public Product getProduct() { return product; }
-    public void setProduct(Product product) { this.product = product; }
+    public Client getClient() {
+        return client;
+    }
 
-    public int getQuantity() { return quantity; }
-    public void setQuantity(int quantity) { this.quantity = quantity; }
+    public void setClient(Client client) {
+        this.client = client;
+    }
 
-    public String getDocumentNumber() { return documentNumber; }
-    public void setDocumentNumber(String documentNumber) { this.documentNumber = documentNumber; }
+    public Product getProduct() {
+        return product;
+    }
 
-    public LocalDate getSaleDate() { return saleDate; }
-    public void setSaleDate(LocalDate saleDate) { this.saleDate = saleDate; }
+    public void setProduct(Product product) {
+        this.product = product;
+    }
 
-    public User getOperator() { return operator; }
-    public void setOperator(User operator) { this.operator = operator; }
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public String getDocumentNumber() {
+        return documentNumber;
+    }
+
+    public void setDocumentNumber(String documentNumber) {
+        this.documentNumber = documentNumber;
+    }
+
+    public LocalDate getSaleDate() {
+        return saleDate;
+    }
+
+    public void setSaleDate(LocalDate saleDate) {
+        this.saleDate = saleDate;
+    }
+
+    public User getOperator() {
+        return operator;
+    }
+
+    public void setOperator(User operator) {
+        this.operator = operator;
+    }
 
 }

@@ -10,6 +10,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 public class RegisterUserController {
 
@@ -22,14 +24,15 @@ public class RegisterUserController {
 
     private final UserService userService = new UserService();
 
+    private static final Logger logger = Logger.getLogger(RegisterUserController.class.getName());
+
     @FXML
     public void initialize() {
-        // 1. Зареждаме ролите (Admin, Operator) в падащото меню
+        // 1. Зареждаме ролите в падащото меню
         try {
             roleCombo.setItems(FXCollections.observableArrayList(userService.getAllRoles()));
         } catch (Exception e) {
-            e.printStackTrace();
-            showError("Грешка при зареждане на ролите!");
+            logger.log(Level.SEVERE, "Грешка при зареждане на ролите", e);
         }
     }
 
@@ -42,26 +45,23 @@ public class RegisterUserController {
                 return;
             }
 
-            // Създаване на обекта
             User newUser = new User(
                     usernameField.getText(),
-                    passwordField.getText(), // В реална система тук се криптира!
+                    passwordField.getText(),
                     fullNameField.getText(),
                     emailField.getText(),
-                    roleCombo.getValue() // Взимаме избрания обект Роля
+                    roleCombo.getValue()
             );
 
             // Запис в базата
             userService.saveUser(newUser);
 
-            // Затваряне при успех
             closeDialog();
-            System.out.println("✅ Успешно създаден потребител: " + newUser.getUsername());
+            System.out.println("Успешно създаден потребител: " + newUser.getUsername());
 
         } catch (Exception e) {
-            e.printStackTrace();
-            // Показваме грешката (напр. "User already exists")
-            showError(e.getMessage());
+            logger.log(Level.SEVERE, "Грешка при запазване на потребител", e);
+            showError(e.getMessage() != null ? e.getMessage() : "Грешка при запазване на потребител");
         }
     }
 

@@ -7,6 +7,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class ProductAddController {
 
     @FXML private TextField nameField;
@@ -14,6 +17,8 @@ public class ProductAddController {
     @FXML private TextField priceOutField;
     @FXML private TextField criticalMinField;
     @FXML private Label errorLabel;
+
+    private static final Logger logger = Logger.getLogger(ProductAddController.class.getName());
 
     private final ProductService productService = new ProductService();
     private boolean saveClicked = false; // Маркер дали е натиснат бутона Запис
@@ -33,7 +38,7 @@ public class ProductAddController {
             criticalMinField.setText(String.valueOf(product.getCriticalMin()));
         }
 
-        // ВАЖНО: Запомняме текущата наличност в променливата, а не в поле!
+        // Запомняме текущата наличност в променливата, а не в поле!
         this.hiddenQuantity = product.getQuantity();
     }
 
@@ -43,7 +48,7 @@ public class ProductAddController {
 
         if (nameField.getText().isEmpty() ||
                 priceInField.getText().isEmpty() ||
-                priceOutField.getText().isEmpty()) { // Вече не проверяваме quantityField
+                priceOutField.getText().isEmpty()) {
 
             errorLabel.setText("Моля, попълнете име и цени!");
             errorLabel.setVisible(true);
@@ -70,7 +75,7 @@ public class ProductAddController {
             } else {
                 // Редакция
                 productToEdit.setProductName(name);
-                productToEdit.setQuantity(hiddenQuantity); // Връщаме старата наличност!
+                productToEdit.setQuantity(hiddenQuantity);
                 productToEdit.setDeliveryPrice(dPrice);
                 productToEdit.setSalePrice(sPrice);
                 productToEdit.setCriticalMin(critMin);
@@ -85,7 +90,7 @@ public class ProductAddController {
             errorLabel.setText("Грешка: Въведете валидни числа!");
             errorLabel.setVisible(true);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Грешка при запазване на стока!", e);
             errorLabel.setText("Техническа грешка!");
             errorLabel.setVisible(true);
         }
@@ -97,11 +102,11 @@ public class ProductAddController {
     }
 
     private void closeDialog() {
-        // Взимаме текущия прозорец и го затваряме
         Stage stage = (Stage) nameField.getScene().getWindow();
         stage.close();
     }
 
+    @SuppressWarnings("unused")
     private boolean validateInput() {
         if (nameField.getText().isEmpty() || priceInField.getText().isEmpty() ||
                 priceOutField.getText().isEmpty() || criticalMinField.getText().isEmpty()) {
@@ -111,12 +116,13 @@ public class ProductAddController {
         return true;
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void showError(String message) {
         errorLabel.setText(message);
         errorLabel.setVisible(true);
     }
 
-    // Този метод ще го ползваме от главния екран, за да разберем дали да обновим таблицата
+    // Ползва се при главният екран
     public boolean isSaveClicked() {
         return saveClicked;
     }

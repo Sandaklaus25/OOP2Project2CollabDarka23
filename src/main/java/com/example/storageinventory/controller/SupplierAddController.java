@@ -7,13 +7,23 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class SupplierAddController {
 
-    @FXML private TextField nameField;
-    @FXML private TextField vatField;
-    @FXML private TextField addressField;
-    @FXML private TextField phoneField;
-    @FXML private Label errorLabel;
+    @FXML
+    private TextField nameField;
+    @FXML
+    private TextField vatField;
+    @FXML
+    private TextField addressField;
+    @FXML
+    private TextField phoneField;
+    @FXML
+    private Label errorLabel;
+
+    private static final Logger logger = Logger.getLogger(SupplierAddController.class.getName());
 
     private final SupplierService service = new SupplierService();
     private boolean saveClicked = false;
@@ -38,12 +48,7 @@ public class SupplierAddController {
 
         try {
             if (supplierToEdit == null) {
-                supplierToEdit = new Supplier(
-                        nameField.getText(),
-                        vatField.getText(),
-                        addressField.getText(),
-                        phoneField.getText()
-                );
+                supplierToEdit = new Supplier(nameField.getText(), vatField.getText(), addressField.getText(), phoneField.getText());
             } else {
                 supplierToEdit.setSupplierName(nameField.getText());
                 supplierToEdit.setVatNumber(vatField.getText());
@@ -56,8 +61,8 @@ public class SupplierAddController {
             closeDialog();
 
         } catch (Exception e) {
-            e.printStackTrace();
-            errorLabel.setText("Грешка при запис!");
+            logger.log(Level.SEVERE, "Грешка при запазване на доставчик!", e);
+            errorLabel.setText("Грешка при запис на доставчик!");
         }
     }
 

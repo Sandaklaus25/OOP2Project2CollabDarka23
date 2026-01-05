@@ -13,13 +13,23 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class SaleAddController {
 
-    @FXML private ComboBox<Client> clientCombo;
-    @FXML private ComboBox<Product> productCombo;
-    @FXML private TextField docField;
-    @FXML private TextField quantityField;
-    @FXML private Label errorLabel;
+    @FXML
+    private ComboBox<Client> clientCombo;
+    @FXML
+    private ComboBox<Product> productCombo;
+    @FXML
+    private TextField docField;
+    @FXML
+    private TextField quantityField;
+    @FXML
+    private Label errorLabel;
+
+    private static final Logger logger = Logger.getLogger(SaleAddController.class.getName());
 
     private final SaleService saleService = new SaleService();
     private final ProductService productService = new ProductService();
@@ -36,8 +46,7 @@ public class SaleAddController {
     @FXML
     public void onSave() {
         try {
-            if (clientCombo.getValue() == null || productCombo.getValue() == null ||
-                    docField.getText().isEmpty() || quantityField.getText().isEmpty()) {
+            if (clientCombo.getValue() == null || productCombo.getValue() == null || docField.getText().isEmpty() || quantityField.getText().isEmpty()) {
                 showError("Всички полета са задължителни!");
                 return;
             }
@@ -48,12 +57,7 @@ public class SaleAddController {
                 return;
             }
 
-            Sale sale = new Sale(
-                    clientCombo.getValue(),
-                    productCombo.getValue(),
-                    quantity,
-                    docField.getText()
-            );
+            Sale sale = new Sale(clientCombo.getValue(), productCombo.getValue(), quantity, docField.getText());
 
             saleService.createSale(sale);
             saveClicked = true;
@@ -62,8 +66,8 @@ public class SaleAddController {
         } catch (NumberFormatException e) {
             showError("Невалидно число за количество!");
         } catch (Exception e) {
-            e.printStackTrace();
-            // Търсим нашето съобщение за липса на стока
+            logger.log(Level.SEVERE, "Грешка при запазване на продажба!", e);
+
             String realMessage = getRootMessage(e);
             showError(realMessage);
         }

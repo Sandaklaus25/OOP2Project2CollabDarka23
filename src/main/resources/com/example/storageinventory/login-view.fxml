@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-
 <VBox alignment="CENTER" spacing="15.0" xmlns="http://javafx.com/javafx/21"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.example.storageinventory.controller.LoginController"
@@ -25,12 +21,12 @@
 
     <VBox spacing="5" alignment="CENTER_LEFT">
         <Label text="Потребителско име:"/>
-        <TextField fx:id="usernameField" promptText=""/>
+        <TextField fx:id="usernameField"/>
     </VBox>
 
     <VBox spacing="5" alignment="CENTER_LEFT">
         <Label text="Парола:"/>
-        <PasswordField fx:id="passwordField" promptText=""/>
+        <PasswordField fx:id="passwordField"/>
     </VBox>
 
     <Label fx:id="errorLabel" textFill="RED" visible="false"/>

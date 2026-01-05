@@ -20,22 +20,28 @@ import javafx.scene.layout.HBox;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class ReportController {
 
-    // Връзка с елементите от FXML
-    @FXML private Label reportTitleLabel;
-    @FXML private HBox filterBox; // Кутията с датите (ще я крием за някои справки)
-    @FXML private DatePicker startDatePicker;
-    @FXML private DatePicker endDatePicker;
+    @FXML
+    private Label reportTitleLabel;
+    @FXML
+    private HBox filterBox; // Кутията с датите (ще я крием за някои справки)
+    @FXML
+    private DatePicker startDatePicker;
+    @FXML
+    private DatePicker endDatePicker;
 
-    // Използваме ? (Wildcard), защото таблицата ще показва различни обекти
-    // (веднъж Sales, веднъж Products, веднъж Deliveries)
-    @FXML private TableView<?> reportTable;
+    // Използваме '?', защото таблицата ще показва различни обекти
+    @FXML
+    private TableView<?> reportTable;
 
-    @FXML private Label totalLabel1; // За "Оборот" или "Брой"
-    @FXML private Label totalLabel2; // За "Печалба"
+    @FXML
+    private Label totalLabel1; // За "Оборот" или "Брой"
+    @FXML
+    private Label totalLabel2; // За "Печалба"
 
     private final ProductService productService = new ProductService();
     private final SaleService saleService = new SaleService();
@@ -46,29 +52,24 @@ public class ReportController {
     // Този метод се вика от MainMenuController веднага след зареждане
     public void initReport(ReportType type) {
         this.currentType = type;
-
-        // 1. Слагаме заглавието според избраното от менюто
         reportTitleLabel.setText(type.getTitle());
 
-        // 2. Настройка на интерфейса според типа
+        // Настройка на интерфейса според типа
         setupInterface();
     }
 
     private void setupInterface() {
-        // Тук ще крием/показваме датите
-        // Например: За Наличност (INVENTORY) не ни трябват дати
         if (currentType == ReportType.INVENTORY) {
             filterBox.setVisible(false);
             filterBox.setManaged(false); // Да не заема място
 
-            // Ако е наличност, може направо да заредим данните, без бутон
+            // Ако е наличност, може направо да заредим данните, без бутон за дати
             onGenerate();
         } else {
-            // За всички останали (Продажби, Доставки, Финанси) искаме дати
+            // За всички останали искаме дати
             filterBox.setVisible(true);
             filterBox.setManaged(true);
 
-            // Слагаме дати по подразбиране (Първи и Последен ден от месеца)
             startDatePicker.setValue(LocalDate.now().withDayOfMonth(1));
             endDatePicker.setValue(LocalDate.now());
         }
@@ -106,43 +107,56 @@ public class ReportController {
         }
     }
 
+    // Форматираме double output с 2 цифри след точката / BGN / (ЗА ТАБЛИЦИ)
+    private <S> void formatCurrencyTableColumnBGN(TableColumn<S, Double> column) {
+        column.setCellFactory(tc -> new javafx.scene.control.TableCell<>() {
+            @Override
+            protected void updateItem(Double item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(String.format("%.2f лв.", item));
+                }
+            }
+        });
+    }
+
     @SuppressWarnings("unchecked")
     private void loadInventoryReport() {
-        // 1. Създаваме колоните
         TableColumn<Product, String> colName = new TableColumn<>("Стока");
         colName.setCellValueFactory(new PropertyValueFactory<>("productName"));
-        colName.setPrefWidth(200); // Можеш да зададеш ширина, ако искаш
+        colName.setPrefWidth(200);
 
         TableColumn<Product, Integer> colQty = new TableColumn<>("Наличност");
         colQty.setCellValueFactory(new PropertyValueFactory<>("quantity"));
 
         TableColumn<Product, Double> colPriceIn = new TableColumn<>("Дост. цена");
         colPriceIn.setCellValueFactory(new PropertyValueFactory<>("deliveryPrice"));
+        formatCurrencyTableColumnBGN(colPriceIn);
 
-        // НОВО: Колона за Продажна цена
         TableColumn<Product, Double> colPriceOut = new TableColumn<>("Прод. цена");
         colPriceOut.setCellValueFactory(new PropertyValueFactory<>("salePrice"));
-        // Оцветяваме я леко в зелено, за да се отличава (опционално)
+        formatCurrencyTableColumnBGN(colPriceOut);
+
         colPriceOut.setStyle("-fx-text-fill: #28a745;");
 
-        TableColumn<Product, Double> colTotal = new TableColumn<>("Стойност (лв)");
+        TableColumn<Product, Double> colTotal = new TableColumn<>("Стойност");
         colTotal.setCellValueFactory(cell -> {
             Product p = cell.getValue();
             // Смятаме стойността по доставна цена (колко пари сме инвестирали)
             double total = p.getQuantity() * p.getDeliveryPrice();
             return new javafx.beans.property.SimpleObjectProperty<>(total);
         });
-
-        // 2. Добавяме ВСИЧКИ колони (включително новата)
+        formatCurrencyTableColumnBGN(colTotal);
+        // Добавяме колоните
         ((TableView<Product>) reportTable).getColumns().setAll(colName, colQty, colPriceIn, colPriceOut, colTotal);
 
-        // 3. Взимаме данните
         List<Product> products = productService.getAllProducts();
 
-        // 4. Слагаме ги в таблицата
+        // Слагаме предметите (продукти) в таблицата
         ((TableView<Product>) reportTable).setItems(FXCollections.observableArrayList(products));
 
-        // 5. Обобщение
         calculateInventoryTotals(products);
     }
 
@@ -157,10 +171,9 @@ public class ReportController {
 
         totalLabel1.setText(String.format("Общо стоки: %d бр.", totalItems));
 
-        // Ползваме втория етикет за парите
         totalLabel2.setVisible(true);
         totalLabel2.setText(String.format("Стойност на склада: %.2f лв.", totalValue));
-        // Оцветяваме го в синьо (информативно), а не зелено (печалба)
+
         totalLabel2.setStyle("-fx-text-fill: #007bff;");
     }
 
@@ -170,57 +183,50 @@ public class ReportController {
         LocalDate end = endDatePicker.getValue();
 
         if (start == null || end == null) {
-            // Може да сложиш alert тук
             return;
         }
 
-        // 1. Колона ДАТА
+        // Колона Дата
         TableColumn<Sale, String> colDate = new TableColumn<>("Дата");
-        colDate.setCellValueFactory(cell ->
-                new SimpleStringProperty(cell.getValue().getSaleDate().toString()));
+        colDate.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getSaleDate().toString()));
 
-        // 2. Колона СТОКА
+        // Колона Стока
         TableColumn<Sale, String> colProduct = new TableColumn<>("Стока");
-        colProduct.setCellValueFactory(cell ->
-                new SimpleStringProperty(cell.getValue().getProduct().getProductName()));
+        colProduct.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getProduct().getProductName()));
 
-        // 3. Колона КОЛИЧЕСТВО
+        // Колона Количество
         TableColumn<Sale, Integer> colQty = new TableColumn<>("К-во");
-        colQty.setCellValueFactory(cell ->
-                new SimpleObjectProperty<>(cell.getValue().getQuantity()));
+        colQty.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().getQuantity()));
 
-        // 4. Колона ОБОРОТ (Тук беше грешката)
-        TableColumn<Sale, Double> colTurnover = new TableColumn<>("Оборот (лв)");
+        // Колона Оборот
+        TableColumn<Sale, Double> colTurnover = new TableColumn<>("Оборот");
         colTurnover.setCellValueFactory(cell -> {
             Sale s = cell.getValue();
-            // ФОРМУЛА: Бройки * Продажна цена от продукта
             double total = s.getQuantity() * s.getProduct().getSalePrice();
             return new SimpleObjectProperty<>(total);
         });
+        formatCurrencyTableColumnBGN(colTurnover);
 
-        // 5. Колона ПЕЧАЛБА
-        TableColumn<Sale, Double> colProfit = new TableColumn<>("Печалба (лв)");
+        // Колона Печалба
+        TableColumn<Sale, Double> colProfit = new TableColumn<>("Печалба");
         colProfit.setCellValueFactory(cell -> {
             Sale s = cell.getValue();
             Product p = s.getProduct();
 
-            // Приход (Оборот)
+            // Приход
             double revenue = s.getQuantity() * p.getSalePrice();
-            // Разход (Доставна цена * бройки)
+            // Разход
             double cost = s.getQuantity() * p.getDeliveryPrice();
-
             return new SimpleObjectProperty<>(revenue - cost);
         });
-        colProfit.setStyle("-fx-text-fill: #28a745; -fx-font-weight: bold;");
+        formatCurrencyTableColumnBGN(colProfit);
+        colProfit.setStyle("-fx-font-weight: bold;");
 
-        // Слагаме колоните
         ((TableView<Sale>) reportTable).getColumns().setAll(colDate, colProduct, colQty, colTurnover, colProfit);
 
-        // Взимаме данните
         List<Sale> sales = saleService.getSalesByPeriod(start, end);
         ((TableView<Sale>) reportTable).setItems(FXCollections.observableArrayList(sales));
 
-        // Обновяваме сумите долу
         calculateFinancialTotals(sales);
     }
 
@@ -231,7 +237,6 @@ public class ReportController {
         for (Sale s : sales) {
             Product p = s.getProduct();
 
-            // Ръчно смятане
             double currentTurnover = s.getQuantity() * p.getSalePrice();
             double currentCost = s.getQuantity() * p.getDeliveryPrice();
 
@@ -242,10 +247,9 @@ public class ReportController {
         totalLabel1.setText(String.format("Оборот: %.2f лв.", totalTurnover));
         totalLabel2.setVisible(true);
         totalLabel2.setText(String.format("Чиста печалба: %.2f лв.", totalProfit));
-        if (totalProfit<0){
+        if (totalProfit < 0) {
             totalLabel2.setStyle("-fx-text-fill: #dc3545; -fx-font-weight: bold;");
-        }
-        else {
+        } else {
             totalLabel2.setStyle("-fx-text-fill: #28a745; -fx-font-weight: bold;");
         }
     }
@@ -257,75 +261,57 @@ public class ReportController {
 
         if (start == null || end == null) return;
 
-        // 1. Колони
         TableColumn<CashEntry, String> colDate = new TableColumn<>("Дата");
-        colDate.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getDate()));
+        colDate.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().date()));
 
         TableColumn<CashEntry, String> colType = new TableColumn<>("Тип");
-        colType.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getType()));
+        colType.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().type()));
 
         TableColumn<CashEntry, String> colInfo = new TableColumn<>("Описание");
-        colInfo.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getInfo()));
+        colInfo.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().info()));
         colInfo.setPrefWidth(250);
 
-        TableColumn<CashEntry, Double> colAmount = new TableColumn<>("Сума (лв)");
+        TableColumn<CashEntry, Double> colAmount = new TableColumn<>("Сума");
 
         colAmount.setCellValueFactory(cell -> {
-            Double val = cell.getValue().getAmount();
+            Double val = cell.getValue().amount();
             // Ако е РАЗХОД, го правим отрицателно число, за да е логично сортирането
-            // (Приходите са положителни, Разходите са отрицателни)
-            if ("РАЗХОД".equals(cell.getValue().getType())) {
+            if ("РАЗХОД".equals(cell.getValue().type())) {
                 val = -val;
             }
             return new SimpleObjectProperty<>(val);
         });
+        formatCurrencyTableColumnBGN(colAmount);
         colAmount.setStyle("-fx-font-weight: bold;");
 
         ((TableView<CashEntry>) reportTable).getColumns().setAll(colDate, colType, colInfo, colAmount);
 
-        // 3. Събиране на данните (СЛИВАНЕ)
         java.util.List<CashEntry> allTransactions = new java.util.ArrayList<>();
 
-        // А) Добавяме Продажбите (Приход)
+        // Добавяме Продажбите (Приход)
         List<Sale> sales = saleService.getSalesByPeriod(start, end);
         for (Sale s : sales) {
             double total = s.getQuantity() * s.getProduct().getSalePrice();
-            allTransactions.add(new CashEntry(
-                    s.getSaleDate().toString(),
-                    "ПРИХОД",
-                    "Продажба: " + s.getProduct().getProductName(),
-                    total,
-                    null
-            ));
+            allTransactions.add(new CashEntry(s.getSaleDate().toString(), "ПРИХОД", "Продажба: " + s.getProduct().getProductName(), total, null));
         }
 
-        // Б) Добавяме Доставките (Разход)
-        // Трябва да имаш deliveryService горе в класа
+        // Добавяме Доставките (Разход)
         List<Delivery> deliveries = deliveryService.getDeliveriesByPeriod(start, end);
         for (Delivery d : deliveries) {
             double total = d.getQuantity() * d.getProduct().getDeliveryPrice();
-            allTransactions.add(new CashEntry(
-                    d.getDeliveryDate().toString(),
-                    "РАЗХОД",
-                    "Доставка: " + d.getProduct().getProductName(),
-                    total,
-                    null
-            ));
+            allTransactions.add(new CashEntry(d.getDeliveryDate().toString(), "РАЗХОД", "Доставка: " + d.getProduct().getProductName(), total, null));
         }
 
-        // 4. Сортиране по дата (най-новите отгоре или обратно)
-        // Тук ги сортираме хронологично (стари -> нови)
-        allTransactions.sort((a, b) -> a.getDate().compareTo(b.getDate()));
+        allTransactions.sort(Comparator.comparing(CashEntry::date));
 
         ((TableView<CashEntry>) reportTable).setItems(FXCollections.observableArrayList(allTransactions));
 
-        // 5. Тотал (Баланс за периода)
         double balance = 0;
         for (CashEntry entry : allTransactions) {
-            if ("ПРИХОД".equals(entry.getType())) {
-                balance += entry.getAmount();
+            if ("ПРИХОД".equals(entry.type())) {
+                balance += entry.amount();
             } else {
-                balance -= entry.getAmount();
+                balance -= entry.amount();
             }
         }
 
@@ -339,7 +325,6 @@ public class ReportController {
         LocalDate end = endDatePicker.getValue();
         if (start == null || end == null) return;
 
-        // Колони
         TableColumn<Delivery, String> colDate = new TableColumn<>("Дата");
         colDate.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getDeliveryDate().toString()));
 
@@ -354,26 +339,25 @@ public class ReportController {
 
         TableColumn<Delivery, Double> colPrice = new TableColumn<>("Дост. Цена");
         colPrice.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().getProduct().getDeliveryPrice()));
+        formatCurrencyTableColumnBGN(colPrice);
 
         TableColumn<Delivery, Double> colTotal = new TableColumn<>("Общо");
         colTotal.setCellValueFactory(cell -> {
             double total = cell.getValue().getQuantity() * cell.getValue().getProduct().getDeliveryPrice();
             return new SimpleObjectProperty<>(total);
         });
+        formatCurrencyTableColumnBGN(colTotal);
 
-        ((TableView<Delivery>) reportTable).getColumns().setAll(colDate, colProduct,colSupplier, colQty, colPrice, colTotal);
+        ((TableView<Delivery>) reportTable).getColumns().setAll(colDate, colProduct, colSupplier, colQty, colPrice, colTotal);
 
-        // Данни
         List<Delivery> list = deliveryService.getDeliveriesByPeriod(start, end);
         ((TableView<Delivery>) reportTable).setItems(FXCollections.observableArrayList(list));
 
-        // Тотал
         double sum = list.stream().mapToDouble(d -> d.getQuantity() * d.getProduct().getDeliveryPrice()).sum();
         totalLabel1.setText(String.format("Общо разходи: %.2f лв.", sum));
         totalLabel2.setVisible(false);
     }
 
-    // 2. ПРОДАЖБИ (ИЗПИСВАНЕ) И КЛИЕНТИ
     @SuppressWarnings("unchecked")
     private void loadSalesReport() {
         LocalDate start = startDatePicker.getValue();
@@ -394,14 +378,16 @@ public class ReportController {
 
         TableColumn<Sale, Double> colPrice = new TableColumn<>("Прод. Цена");
         colPrice.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().getProduct().getSalePrice()));
+        formatCurrencyTableColumnBGN(colPrice);
 
         TableColumn<Sale, Double> colTotal = new TableColumn<>("Оборот");
         colTotal.setCellValueFactory(cell -> {
             double total = cell.getValue().getQuantity() * cell.getValue().getProduct().getSalePrice();
             return new SimpleObjectProperty<>(total);
         });
+        formatCurrencyTableColumnBGN(colTotal);
 
-        ((TableView<Sale>) reportTable).getColumns().setAll(colDate,colClient, colProduct, colQty, colPrice, colTotal);
+        ((TableView<Sale>) reportTable).getColumns().setAll(colDate, colClient, colProduct, colQty, colPrice, colTotal);
 
         List<Sale> list = saleService.getSalesByPeriod(start, end);
         ((TableView<Sale>) reportTable).setItems(FXCollections.observableArrayList(list));
@@ -419,83 +405,46 @@ public class ReportController {
 
         // Колони
         TableColumn<CashEntry, String> colDate = new TableColumn<>("Дата");
-        colDate.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getDate()));
+        colDate.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().date()));
 
         TableColumn<CashEntry, String> colOp = new TableColumn<>("Оператор");
-        colOp.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getOperator()));
+        colOp.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().operator()));
 
         TableColumn<CashEntry, String> colType = new TableColumn<>("Действие");
-        colType.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getType()));
+        colType.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().type()));
 
         TableColumn<CashEntry, String> colInfo = new TableColumn<>("Детайли");
-        colInfo.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getInfo()));
+        colInfo.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().info()));
         colInfo.setPrefWidth(300);
 
         ((TableView<CashEntry>) reportTable).getColumns().setAll(colDate, colOp, colType, colInfo);
 
         List<CashEntry> activities = new ArrayList<>();
 
-        // 1. Продажби
+        // Продажби
         List<Sale> sales = saleService.getSalesByPeriod(start, end);
         for (Sale s : sales) {
-            String operatorName = (s.getOperator() != null)
-                    ? s.getOperator().getUsername()
-                    : "Неизвестен";
+            String operatorName = (s.getOperator() != null) ? s.getOperator().getUsername() : "Неизвестен";
 
-            activities.add(new CashEntry(
-                    s.getSaleDate().toString(),
-                    "ПРОДАЖБА",
-                    s.getProduct().getProductName() + " (" + s.getQuantity() + " бр.)",
-                    0.0,
-                    operatorName
-            ));
+            activities.add(new CashEntry(s.getSaleDate().toString(), "ПРОДАЖБА", s.getProduct().getProductName() + " (" + s.getQuantity() + " бр.)", 0.0, operatorName));
         }
 
-        // 2. Доставки
+        // Доставки
         List<Delivery> deliveries = deliveryService.getDeliveriesByPeriod(start, end);
         for (Delivery d : deliveries) {
-            String operatorName = (d.getOperator() != null)
-                    ? d.getOperator().getUsername()
-                    : "Неизвестен";
+            String operatorName = (d.getOperator() != null) ? d.getOperator().getUsername() : "Неизвестен";
 
-            activities.add(new CashEntry(
-                    d.getDeliveryDate().toString(),
-                    "ДОСТАВКА",
-                    d.getProduct().getProductName() + " (" + d.getQuantity() + " бр.)",
-                    0.0,
-                    operatorName
-            ));
+            activities.add(new CashEntry(d.getDeliveryDate().toString(), "ДОСТАВКА", d.getProduct().getProductName() + " (" + d.getQuantity() + " бр.)", 0.0, operatorName));
 
         }
 
-        // Сортиране и показване
-        activities.sort((a, b) -> a.getDate().compareTo(b.getDate()));
+        activities.sort(Comparator.comparing(CashEntry::date));
         ((TableView<CashEntry>) reportTable).setItems(FXCollections.observableArrayList(activities));
 
         totalLabel1.setText("Общо операции: " + activities.size());
         totalLabel2.setVisible(false);
     }
 
-    public static class CashEntry {
-        private String date;
-        private String type;
-        private String info;
-        private Double amount;
-        private String operator; // НОВО ПОЛЕ
-
-        public CashEntry(String date, String type, String info, Double amount, String operator) {
-            this.date = date;
-            this.type = type;
-            this.info = info;
-            this.amount = amount;
-            this.operator = operator;
-        }
-
-        // Getters...
-        public String getDate() { return date; }
-        public String getType() { return type; }
-        public String getInfo() { return info; }
-        public Double getAmount() { return amount; }
-        public String getOperator() { return operator; } // НОВ GETTER
+    public record CashEntry(String date, String type, String info, Double amount, String operator) {
     }
 }

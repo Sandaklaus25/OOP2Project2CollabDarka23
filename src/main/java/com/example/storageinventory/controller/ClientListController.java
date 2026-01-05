@@ -13,6 +13,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class ClientListController {
 
     @FXML private TableView<Client> clientTable;
@@ -20,6 +23,8 @@ public class ClientListController {
     @FXML private TableColumn<Client, String> colVat;
     @FXML private TableColumn<Client, String> colAddress;
     @FXML private TableColumn<Client, String> colPhone;
+
+    private static final Logger logger = Logger.getLogger(ClientListController.class.getName());
 
     private final ClientService clientService = new ClientService();
 
@@ -44,7 +49,7 @@ public class ClientListController {
         if (selected != null) {
             clientService.deleteClient(selected);
             loadData();
-            System.out.println("✅ Клиентът е изтрит.");
+            System.out.println("Клиентът е изтрит.");
         }
     }
 
@@ -66,7 +71,7 @@ public class ClientListController {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Грешка при добавяне на клиент!", e);
         }
     }
 
@@ -74,7 +79,7 @@ public class ClientListController {
     public void onEditClient() {
         Client selected = clientTable.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            System.out.println("⚠️ Избери клиент!");
+            System.out.println("Избери клиент!");
             return;
         }
 
@@ -95,7 +100,7 @@ public class ClientListController {
                 loadData();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Грешка при редакция на клиент!", e);
         }
     }
 }

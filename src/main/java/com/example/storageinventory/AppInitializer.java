@@ -4,9 +4,14 @@ import com.example.storageinventory.model.*;
 import com.example.storageinventory.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.query.Query;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 
 public class AppInitializer {
+
+    private static final Logger logger = Logger.getLogger(AppInitializer.class.getName());
 
     public static void main(String[] args) {
         System.out.println("СТАРТИРАНЕ НА ПЪЛНА ИНИЦИАЛИЗАЦИЯ...");
@@ -15,11 +20,11 @@ public class AppInitializer {
             Transaction tx = session.beginTransaction();
 
             try {
-                // 1. РОЛИ
+                // Роли
                 UserRole adminRole = getOrCreateRole(session, "ADMIN");
                 UserRole operatorRole = getOrCreateRole(session, "OPERATOR");
 
-                // 2. ПОТРЕБИТЕЛИ
+                // Потербители
                 if (!exists(session, "User", "username", "admin")) {
                     User admin = new User("admin", "admin123", "Main Administrator", "admin@sys.bg", adminRole);
                     session.persist(admin);
@@ -32,7 +37,7 @@ public class AppInitializer {
                     System.out.println("Operator user създаден.");
                 }
 
-                // 3. КАСА (Много важно!)
+                // Каса
                 CashRegister cashRegister = session.get(CashRegister.class, 1L);
                 if (cashRegister == null) {
                     cashRegister = new CashRegister(50000.00); // Начален капитал
@@ -40,19 +45,19 @@ public class AppInitializer {
                     System.out.println("Касата е отворена с 50,000 лв.");
                 }
 
-                // 4. ДОСТАВЧИЦИ
-                if (!exists(session, "Supplier", "companyName", "TechBG Ltd.")) {
+                // Доставчици
+                if (!exists(session, "Supplier", "supplierName", "TechBG Ltd.")) {
                     session.persist(new Supplier("TechBG Ltd.", "BG123456789", "София", "0888111222"));
                     System.out.println("Доставчик TechBG добавен.");
                 }
 
-                // 5. КЛИЕНТИ
+                // Клиенти
                 if (!exists(session, "Client", "clientName", "Иван Иванов")) {
                     session.persist(new Client("Иван Иванов", "9090901234", "Пловдив", "0899333444"));
                     System.out.println("Клиент Иван Иванов добавен.");
                 }
 
-                // 6. СТОКИ (Примерни)
+                // Стоки
                 if (!exists(session, "Product", "productName", "Лаптоп HP")) {
 
                     Product p = new Product("Лаптоп HP", 0, 1200.00, 1500.00, 10);
@@ -66,17 +71,16 @@ public class AppInitializer {
 
             } catch (Exception e) {
                 if (tx != null) tx.rollback();
-                e.printStackTrace();
+                logger.log(Level.SEVERE, "Грешка при пълна инициализация!", e);
             }
         } finally {
             HibernateUtil.shutdown();
         }
     }
 
-    // Помощни методи за по-чист код
+    // Помощни методи
     private static UserRole getOrCreateRole(Session session, String roleName) {
-        UserRole role = session.createQuery("FROM UserRole WHERE roleName = :name", UserRole.class)
-                .setParameter("name", roleName).uniqueResult();
+        UserRole role = session.createQuery("FROM UserRole WHERE roleName = :name", UserRole.class).setParameter("name", roleName).uniqueResult();
         if (role == null) {
             role = new UserRole(roleName);
             session.persist(role);
@@ -84,10 +88,9 @@ public class AppInitializer {
         return role;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private static boolean exists(Session session, String entityName, String field, String value) {
-        Long count = session.createQuery("SELECT count(e) FROM " + entityName + " e WHERE e." + field + " = :val", Long.class)
-                .setParameter("val", value)
-                .uniqueResult();
+        Long count = session.createQuery("SELECT count(e) FROM " + entityName + " e WHERE e." + field + " = :val", Long.class).setParameter("val", value).uniqueResult();
         return count > 0;
     }
 }

@@ -15,23 +15,20 @@ public class Product {
     @Column(name = "product_name", nullable = false, length = 100)
     private String productName;
 
-    // Налично количество (променя се при покупка/продажба)
     @Column(name = "quantity", nullable = false)
     private Integer quantity = 0;
 
-    // Доставна цена (за колко я купуваме)
     @Column(name = "delivery_price")
     private Double deliveryPrice;
 
-    // Продажна цена (за колко я продаваме)
     @Column(name = "sale_price")
     private Double salePrice;
 
-    // Критичен минимум (за известия)
     @Column(name = "critical_min")
     private Integer criticalMin;
 
-    public Product() {}
+    public Product() {
+    }
 
     public Product(String productName, Integer quantity, Double deliveryPrice, Double salePrice, Integer criticalMin) {
         this.productName = productName;
@@ -42,26 +39,56 @@ public class Product {
     }
 
     // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getProductName() { return productName; }
-    public void setProductName(String productName) { this.productName = productName; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public Integer getQuantity() { return quantity; }
-    public void setQuantity(Integer quantity) { this.quantity = quantity; }
+    public String getProductName() {
+        return productName;
+    }
 
-    public Double getDeliveryPrice() { return deliveryPrice; }
-    public void setDeliveryPrice(Double deliveryPrice) { this.deliveryPrice = deliveryPrice; }
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
 
-    public Double getSalePrice() { return salePrice; }
-    public void setSalePrice(Double salePrice) { this.salePrice = salePrice; }
+    public Integer getQuantity() {
+        return quantity;
+    }
 
-    public Integer getCriticalMin() { return criticalMin; }
-    public void setCriticalMin(Integer criticalMin) { this.criticalMin = criticalMin; }
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
+    public Double getDeliveryPrice() {
+        return deliveryPrice;
+    }
+
+    public void setDeliveryPrice(Double deliveryPrice) {
+        this.deliveryPrice = deliveryPrice;
+    }
+
+    public Double getSalePrice() {
+        return salePrice;
+    }
+
+    public void setSalePrice(Double salePrice) {
+        this.salePrice = salePrice;
+    }
+
+    public Integer getCriticalMin() {
+        return criticalMin;
+    }
+
+    public void setCriticalMin(Integer criticalMin) {
+        this.criticalMin = criticalMin;
+    }
 
     @Override
     public String toString() {
-        return productName; // Важно за падащи менюта по-късно
+        return productName;
     }
 }
